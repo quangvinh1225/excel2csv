@@ -47,6 +47,9 @@ public class Excel2CSV {
     @Option(name = "-F", usage = "Overwrite sheet if exists")
     private boolean optionOverwrite = false;
 
+    @Option(name = "-H", usage = "Ignore Header Row")
+    private boolean ignoreHeader = false;
+    
     @Option(name = "-h", usage = "Show help")
     private boolean optionHelp = false;
 
@@ -115,7 +118,8 @@ public class Excel2CSV {
                     outputSheetName(optionOutputSheetName).
                     overwriteSheet(optionOverwrite).
                     largeExcelMode(optionLargetExcel).
-                    prettyTable(!optionDisablePretty).build();
+                    prettyTable(!optionDisablePretty).
+                    useHeader(ignoreHeader).build();
             //log.info("pretty {}", converter.isPrettyTable());
             converter.doConvert(inputFiles, outputFile);
         } catch (Exception e) {

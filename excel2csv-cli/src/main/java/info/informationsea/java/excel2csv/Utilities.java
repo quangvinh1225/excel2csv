@@ -36,6 +36,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -178,7 +179,23 @@ public class Utilities {
             writer.printRecord((Object[])record.getContent());
         }
     }
+    
+    public static void copyTable(TableReader reader, TableWriter writer, boolean useHeader) throws Exception {
+    	if(useHeader){
+    		Method useHeaderMethod = null;
+    		try {
+    			useHeaderMethod = reader.getClass().getMethod("setUseHeader", boolean.class);	
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+        	if(useHeaderMethod!=null){
+        		useHeaderMethod.invoke(reader, useHeader);
+        	}
+    	}
+        copyTable(reader, writer);
+    }
 
+    
     public static void deleteDirectoryRecursive(Path dir) throws IOException {
         Files.walkFileTree(dir, new FileVisitor<Path>() {
             @Override

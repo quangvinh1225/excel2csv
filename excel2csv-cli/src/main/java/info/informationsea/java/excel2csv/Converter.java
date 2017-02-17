@@ -35,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.reflect.Method;
 import java.util.List;
 
 
@@ -49,6 +50,7 @@ public class Converter {
     private boolean prettyTable = true;
     private boolean convertCellTypes = true;
     private boolean largeExcelMode = true;
+    private boolean useHeader=true;
 
     public void doConvert(List<File> inputFiles, File outputFile) throws Exception {
         if (copyAllSheets || inputFiles.size() > 1) {
@@ -109,7 +111,7 @@ public class Converter {
                             ExcelSheetWriter sheetWriter = new ExcelSheetWriter(Utilities.createUniqueNameSheetForWorkbook(workbook, inputWorkbook.getSheetName(i), overwriteSheet));
                             sheetWriter.setPrettyTable(prettyTable);
                             try (TableWriter tableWriter = new FilteredWriter(sheetWriter, convertCellTypes)) {
-                                Utilities.copyTable(reader, tableWriter);
+                                Utilities.copyTable(reader, tableWriter,useHeader);
                             }
                         }
                     }
@@ -120,7 +122,7 @@ public class Converter {
                         ExcelSheetWriter sheetWriter = new ExcelSheetWriter(Utilities.createUniqueNameSheetForWorkbook(workbook, oneInput.getName(), overwriteSheet));
                         sheetWriter.setPrettyTable(prettyTable);
                         try (TableWriter tableWriter = new FilteredWriter(sheetWriter, convertCellTypes)) {
-                            Utilities.copyTable(reader, tableWriter);
+                            Utilities.copyTable(reader, tableWriter,useHeader);
                         }
                     }
                     break;
@@ -135,7 +137,7 @@ public class Converter {
         try (TableWriter writer = Utilities.openWriter(outputFile, outputSheetName, overwriteSheet, prettyTable, largeExcelMode)) {
             try (TableReader reader = Utilities.openReader(inputFile, inputSheetIndex, inputSheetName)) {
                 FilteredWriter writer2 = new FilteredWriter(writer, convertCellTypes);
-                Utilities.copyTable(reader, writer2);
+                Utilities.copyTable(reader, writer2,useHeader);
             }
         }
     }
