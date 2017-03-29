@@ -20,30 +20,43 @@ package info.informationsea.java.excel2csv;
 
 import info.informationsea.tableio.TableWriter;
 import info.informationsea.tableio.impl.AbstractTableWriter;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@AllArgsConstructor @Slf4j
+@RequiredArgsConstructor @Slf4j
 public class FilteredWriter extends AbstractTableWriter {
 
-    private TableWriter writer;
-    private boolean autoConvert;
+    final private TableWriter writer;
+    final private boolean autoConvert;
+    final private boolean fistCount;
+    int count=0;
 
     @Override
     public void printRecord(Object... values) throws Exception {
-        Object[] filteredValues = new Object[values.length];
+    	count++;
+    	
+        Object[] filteredValues = new Object[values.length + (fistCount?1:0)];
+        if(fistCount){
+    		filteredValues[0] = "\\N";
+        }
+        
         for (int i = 0; i < values.length; i++) {
+        	int j = i;
+        	if(fistCount){
+        		j += 1;
+        	}
+        	
             if (autoConvert) {
                 try {
-                    filteredValues[i] = Double.valueOf(values[i].toString());
+                    filteredValues[j] = Double.valueOf(values[i].toString());
                 } catch (NumberFormatException e) {
-                    filteredValues[i] = values[i];
+                    filteredValues[j] = values[i];
                 }
             } else {
                 if (values[i] != null)
-                    filteredValues[i] = values[i].toString();
+                    filteredValues[j] = values[i].toString();
                 else
-                    filteredValues[i] = "";
+                    filteredValues[j] = "";
             }
         }
         writer.printRecord(filteredValues);

@@ -51,6 +51,7 @@ public class Converter {
     private boolean convertCellTypes = true;
     private boolean largeExcelMode = true;
     private boolean useHeader=true;
+    private boolean fistCount=false;
 
     public void doConvert(List<File> inputFiles, File outputFile) throws Exception {
         if (copyAllSheets || inputFiles.size() > 1) {
@@ -110,7 +111,7 @@ public class Converter {
                         try (TableReader reader = new ExcelSheetReader(inputWorkbook.getSheetAt(i))) {
                             ExcelSheetWriter sheetWriter = new ExcelSheetWriter(Utilities.createUniqueNameSheetForWorkbook(workbook, inputWorkbook.getSheetName(i), overwriteSheet));
                             sheetWriter.setPrettyTable(prettyTable);
-                            try (TableWriter tableWriter = new FilteredWriter(sheetWriter, convertCellTypes)) {
+                            try (TableWriter tableWriter = new FilteredWriter(sheetWriter, convertCellTypes,fistCount)) {
                                 Utilities.copyTable(reader, tableWriter,useHeader);
                             }
                         }
@@ -121,7 +122,7 @@ public class Converter {
                     try (TableReader reader = Utilities.openReader(oneInput, inputSheetIndex, inputSheetName)) {
                         ExcelSheetWriter sheetWriter = new ExcelSheetWriter(Utilities.createUniqueNameSheetForWorkbook(workbook, oneInput.getName(), overwriteSheet));
                         sheetWriter.setPrettyTable(prettyTable);
-                        try (TableWriter tableWriter = new FilteredWriter(sheetWriter, convertCellTypes)) {
+                        try (TableWriter tableWriter = new FilteredWriter(sheetWriter, convertCellTypes,fistCount)) {
                             Utilities.copyTable(reader, tableWriter,useHeader);
                         }
                     }
@@ -136,7 +137,7 @@ public class Converter {
     private void doConvertOne(File inputFile, File outputFile) throws Exception {
         try (TableWriter writer = Utilities.openWriter(outputFile, outputSheetName, overwriteSheet, prettyTable, largeExcelMode)) {
             try (TableReader reader = Utilities.openReader(inputFile, inputSheetIndex, inputSheetName)) {
-                FilteredWriter writer2 = new FilteredWriter(writer, convertCellTypes);
+                FilteredWriter writer2 = new FilteredWriter(writer, convertCellTypes,fistCount);
                 Utilities.copyTable(reader, writer2,useHeader);
             }
         }

@@ -50,6 +50,9 @@ public class Excel2CSV {
     @Option(name = "-H", usage = "Ignore Header Row")
     private boolean ignoreHeader = false;
     
+    @Option(name = "-C", usage = "Add a count column at first")
+    private boolean fistCount = false;
+    
     @Option(name = "-h", usage = "Show help")
     private boolean optionHelp = false;
 
@@ -119,7 +122,8 @@ public class Excel2CSV {
                     overwriteSheet(optionOverwrite).
                     largeExcelMode(optionLargetExcel).
                     prettyTable(!optionDisablePretty).
-                    useHeader(ignoreHeader).build();
+                    useHeader(ignoreHeader).
+                    fistCount(fistCount).build();
             //log.info("pretty {}", converter.isPrettyTable());
             converter.doConvert(inputFiles, outputFile);
         } catch (Exception e) {
